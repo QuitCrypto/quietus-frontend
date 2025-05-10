@@ -3,16 +3,21 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAccount, useConnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
+import { useAccount } from "wagmi";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
+import dynamic from 'next/dynamic';
+import WalletTest from "@/components/wallet-test";
+
+// Use dynamic import to prevent hydration errors
+const WalletTestWithNoSSR = dynamic(
+  () => import('@/components/wallet-test'),
+  { ssr: false }
+);
 
 export default function Home() {
   const { isConnected } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
   const router = useRouter();
   
   // Redirect to dashboard if already connected
@@ -33,69 +38,29 @@ export default function Home() {
         A strategic blockchain game where survival depends on your wits, alliances, and resource management across multiple chains
       </p>
       
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mb-16">
-        <Card className="border-primary/20 bg-background/60 backdrop-blur-sm">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Strategic Gameplay</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Choose your actions wisely between attacking, avoiding, or forming alliances in a zero-sum game for survival.
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="border-primary/20 bg-background/60 backdrop-blur-sm">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Multi-Chain Resources</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              Collect and trade resources across ETH, BASE, APE, and ABSTRACT chains to gain advantage over your opponents.
-            </p>
-          </CardContent>
-        </Card>
-        
-        <Card className="border-primary/20 bg-background/60 backdrop-blur-sm">
-          <CardHeader className="space-y-1">
-            <CardTitle className="text-xl">Cycle-Based Progression</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              The game evolves through timed cycles, with increasing stakes and permanent elimination in the final stages.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-      
-      <Card className="max-w-md w-full border-primary/20 bg-background/60 backdrop-blur-sm">
+      <Card className="max-w-md w-full border-primary/20 bg-background/60 backdrop-blur-sm mb-8">
         <CardHeader>
-          <CardTitle>Join the Game</CardTitle>
+          <CardTitle>Welcome to Quietus</CardTitle>
           <CardDescription>
-            Connect your wallet to register and start playing
+            Connect your wallet to join the game
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <p className="mb-4 text-sm text-muted-foreground">
-            The registration fee covers your entry and contributes to the reward pool distributed to survivors at the end of the game.
+        <CardContent className="text-center">
+          <p className="mb-6 text-sm text-muted-foreground">
+            Quietus is a survival strategy game where players compete for resources and territory across multiple blockchain networks.
+            Form alliances, attack rivals, and collect resources to ensure your survival.
           </p>
-          <Button 
-            className="w-full" 
-            size="lg"
-            onClick={() => connect()}
-          >
-            Connect Wallet
-          </Button>
+          
+          <div className="flex justify-center">
+            <ConnectButton />
+          </div>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Link href="/rules" className="text-sm text-primary hover:underline">
-            Read Game Rules
-          </Link>
-          <Link href="/cycles" className="text-sm text-primary hover:underline">
-            View Current Cycle
-          </Link>
-        </CardFooter>
       </Card>
+      
+      {/* Wallet test component */}
+      <div className="max-w-md w-full">
+        <WalletTestWithNoSSR />
+      </div>
     </div>
   );
 } 

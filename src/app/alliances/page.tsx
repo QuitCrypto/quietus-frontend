@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -57,7 +57,7 @@ export default function AlliancesPage() {
   });
   
   // Handle betrayal errors
-  useState(() => {
+  useEffect(() => {
     if (betrayError) {
       toast({
         title: "Betrayal Error",
@@ -65,16 +65,16 @@ export default function AlliancesPage() {
         variant: "destructive",
       });
     }
-  });
+  }, [betrayError, toast]);
   
   // Redirect if not connected or not a registered player
-  useState(() => {
+  useEffect(() => {
     if (!isConnected) {
       router.push("/");
     } else if (playerStatus && !playerStatus.registered) {
       router.push("/dashboard");
     }
-  });
+  }, [isConnected, playerStatus, router]);
   
   // Loading state
   const isLoading = isBetrayLoading || isWaitingForBetrayal;

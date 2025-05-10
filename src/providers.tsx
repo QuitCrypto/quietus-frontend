@@ -1,16 +1,21 @@
 "use client";
 
 import { ThemeProvider } from "next-themes";
-import { WagmiConfig, createConfig, configureChains } from "wagmi";
-import { publicProvider } from "wagmi/providers/public";
+import { configureChains, createConfig, WagmiConfig } from "wagmi";
 import { jsonRpcProvider } from "wagmi/providers/jsonRpc";
-import { MetaMaskConnector } from "wagmi/connectors/metaMask";
-import { WalletConnectConnector } from "wagmi/connectors/walletConnect";
-import { CoinbaseWalletConnector } from "wagmi/connectors/coinbaseWallet";
+import { publicProvider } from "wagmi/providers/public";
 import { base, arbitrum, mainnet } from "wagmi/chains";
 import { Chain } from "wagmi";
 import { GameStateProvider } from "@/contexts/game-state";
 import { useEffect, useState } from "react";
+
+// RainbowKit imports
+import {
+  RainbowKitProvider,
+  getDefaultWallets,
+  darkTheme,
+} from '@rainbow-me/rainbowkit';
+import '@rainbow-me/rainbowkit/styles.css';
 
 // Define local Anvil chain
 const anvilChain: Chain = {
@@ -43,65 +48,47 @@ const { chains, publicClient, webSocketPublicClient } = configureChains(
   ]
 );
 
-// Create wagmi config with proper connectors
+// Get RainbowKit wallets - use a valid projectId for WalletConnect
+const { connectors } = getDefaultWallets({
+  appName: 'Quietus',
+  // Valid WalletConnect project ID 
+  projectId: '7f0793c4d8b20795d1c3f8ea1e3634f9',
+  chains
+});
+
+// Create wagmi config
 const config = createConfig({
   autoConnect: true,
-  connectors: [
-    new MetaMaskConnector({ 
-      chains,
-      options: {
-        shimDisconnect: true,
-        UNSTABLE_shimOnConnectSelectAccount: true,
-      },
-    }),
-    new CoinbaseWalletConnector({
-      chains,
-      options: {
-        appName: "Quietus",
-        reloadOnDisconnect: true,
-      },
-    }),
-    new WalletConnectConnector({
-      chains,
-      options: {
-        projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "demo-project-id",
-        showQrModal: true,
-      },
-    }),
-  ],
+  connectors,
   publicClient,
   webSocketPublicClient,
 });
 
-function WagmiProvider({ children }: { children: React.ReactNode }) {
+export function Providers({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true);
-    
-    // Add console logging for debugging
-    console.log("WagmiProvider mounted, wallet connection available");
   }, []);
 
   return (
     <WagmiConfig config={config}>
-      {mounted ? children : null}
+      <RainbowKitProvider chains={chains} theme={darkTheme({
+        accentColor: 'hsl(142.1 70.6% 45.3%)',
+        accentColorForeground: 'black',
+        borderRadius: 'medium',
+        fontStack: 'system',
+      })}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem={false}
+        >
+          <GameStateProvider>
+            {mounted ? children : null}
+          </GameStateProvider>
+        </ThemeProvider>
+      </RainbowKitProvider>
     </WagmiConfig>
-  );
-}
-
-export function Providers({ children }: { children: React.ReactNode }) {
-  return (
-    <WagmiProvider>
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem={false}
-      >
-        <GameStateProvider>
-          {children}
-        </GameStateProvider>
-      </ThemeProvider>
-    </WagmiProvider>
   );
 } 

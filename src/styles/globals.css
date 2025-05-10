@@ -75,4 +75,23 @@
     background-size: 550px 550px, 350px 350px, 250px 250px;
     background-position: 0 0, 40px 60px, 130px 270px;
   }
+  
+  /* 8-bit pixelated style */
+  .pixelated {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+  }
+  
+  /* HUD Panel style */
+  .hud-panel {
+    @apply bg-black/70 backdrop-blur-sm border-2 border-primary/50 rounded-md p-2 shadow-md shadow-primary/20;
+  }
+  
+  /* 8-bit font style */
+  .pixel-text {
+    font-family: monospace;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
 } 

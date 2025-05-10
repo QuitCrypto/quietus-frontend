@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAccount, useContractWrite, useWaitForTransaction } from "wagmi";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -52,7 +52,7 @@ export default function ResourcesPage() {
   });
   
   // Handle collection errors
-  useState(() => {
+  useEffect(() => {
     if (collectError) {
       toast({
         title: "Collection Error",
@@ -60,16 +60,16 @@ export default function ResourcesPage() {
         variant: "destructive",
       });
     }
-  });
+  }, [collectError, toast]);
   
   // Redirect if not connected or not a registered player
-  useState(() => {
+  useEffect(() => {
     if (!isConnected) {
       router.push("/");
     } else if (playerStatus && !playerStatus.registered) {
       router.push("/dashboard");
     }
-  });
+  }, [isConnected, playerStatus, router]);
   
   // Loading state
   const isLoading = isCollectLoading || isWaitingForCollection;

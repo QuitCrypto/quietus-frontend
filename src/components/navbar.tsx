@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { useGameState } from "@/contexts/game-state";
 import dynamic from "next/dynamic";
-import { ConnectWallet } from "@/components/connect-wallet";
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // Wrap the Navbar in a dynamic import to prevent SSR
 const NavbarContent = () => {
@@ -96,27 +96,24 @@ const NavbarContent = () => {
             </div>
           )}
           
-          <ConnectWallet />
+          <ConnectButton />
           
-          <button
-            className="block md:hidden"
+          <Button
+            variant="ghost"
+            className="md:hidden"
+            size="icon"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              viewBox="0 0 24 24"
-              strokeWidth={1.5}
-              stroke="currentColor"
-              className="w-6 h-6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
-              />
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isMenuOpen ? "hidden" : "block"}>
+              <line x1="3" y1="12" x2="21" y2="12"></line>
+              <line x1="3" y1="6" x2="21" y2="6"></line>
+              <line x1="3" y1="18" x2="21" y2="18"></line>
             </svg>
-          </button>
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isMenuOpen ? "block" : "hidden"}>
+              <line x1="18" y1="6" x2="6" y2="18"></line>
+              <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+          </Button>
         </div>
       </div>
       
